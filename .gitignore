@@ -1,0 +1,40 @@
+# =========================
+# FocusTune - .gitignore
+# =========================
+
+# File sistem operasi
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Dependensi (tidak dipakai, tapi diamankan)
+node_modules/
+bower_components/
+vendor/
+
+# Log & file sementara
+*.log
+*.tmp
+*.temp
+*.bak
+
+# Environment / rahasia
+.env
+.env.*
+
+# Hasil build (jika nanti ditambahkan)
+dist/
+build/
+out/
+
+# Cache
+.cache/
+*.tsbuildinfo
