@@ -100,8 +100,26 @@ Cara paling mudah: **GitHub Pages** (gratis & HTTPS).
 
 Setelah dipasang, ikon FocusTune muncul di home screen dan bisa dibuka seperti aplikasi biasa, termasuk offline.
 
-> PWA **bukan file `.apk`**, tapi tampil dan berfungsi seperti aplikasi di HP.  
-> Kalau nanti benar-benar ingin file `.apk`, aplikasi ini bisa dibungkus dengan **Capacitor** + Android Studio. Itu opsional dan tidak diperlukan untuk pakai di HP.
+## 🤖 APK Android (sudah jadi)
+
+Selain PWA, aplikasi ini juga sudah dikemas jadi **APK asli** dengan Capacitor.
+
+```text
+D:\santiago\waktu_belajar\FocusTune-v1.0.apk
+```
+
+Cara pasang:
+1. Copy APK ke HP.
+2. Buka dari File Manager → izinkan **Install unknown apps**.
+3. Tekan **Install**, lalu buka aplikasi **FocusTune**.
+
+APK sudah signed, berjalan offline, dan memakai ikon FocusTune. Detail build, cara rebuild, dan catatan keystore ada di:
+
+```text
+D:\santiago\waktu_belajar\focustune-apk\README.md
+```
+
+> PWA dan APK memakai kode sumber yang sama. Pilih mana saja yang paling nyaman: PWA cukup buka URL, APK tinggal install file.
 
 ---
 
