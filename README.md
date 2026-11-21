@@ -105,15 +105,15 @@ Setelah dipasang, ikon FocusTune muncul di home screen dan bisa dibuka seperti a
 Selain PWA, aplikasi ini juga sudah dikemas jadi **APK asli** dengan Capacitor.
 
 ```text
-D:\santiago\waktu_belajar\FocusTune-v1.0.apk
+D:\santiago\waktu_belajar\fokus tune.apk
 ```
 
 Cara pasang:
 1. Copy APK ke HP.
 2. Buka dari File Manager → izinkan **Install unknown apps**.
-3. Tekan **Install**, lalu buka aplikasi **FocusTune**.
+3. Tekan **Install**, lalu buka aplikasi **fokus tune**.
 
-APK sudah signed, berjalan offline, dan memakai ikon FocusTune. Detail build, cara rebuild, dan catatan keystore ada di:
+APK sudah signed (versi 1.1), berjalan offline, dan memakai ikon dari `waktu_belajar/icon.png`. Detail build, cara rebuild, dan catatan keystore ada di:
 
 ```text
 D:\santiago\waktu_belajar\focustune-apk\README.md
