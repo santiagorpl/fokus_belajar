@@ -2,11 +2,13 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#07120e" />
-  <meta name="description" content="FocusTune – Music & Study Timer, aplikasi pomodoro dengan musik dan alarm bawaan." />
+  <meta name="description" content="FocusTune – Pomodoro timer dengan musik, album, noise generator, dan statistik fokus. Bisa dipasang di HP." />
   <title>FocusTune – Music &amp; Study Timer</title>
   <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -34,6 +36,9 @@
         <button class="nav-item" data-view="music" type="button">
           <span class="nav-icon" aria-hidden="true">♫</span><span>Musik</span>
         </button>
+        <button class="nav-item" data-view="stats" type="button">
+          <span class="nav-icon" aria-hidden="true">▥</span><span>Statistik</span>
+        </button>
         <button class="nav-item" data-view="settings" type="button">
           <span class="nav-icon" aria-hidden="true">⚙</span><span>Pengaturan</span>
         </button>
@@ -55,7 +60,10 @@
           <p class="eyebrow">FOKUS &middot; MUSIK &middot; WAKTU</p>
           <h1 id="page-title">Timer Belajar</h1>
         </div>
-        <div class="topbar-badge" id="mode-label">Musik: Belajar + Istirahat</div>
+        <div class="topbar-actions">
+          <button class="icon-btn help-btn" id="btn-help" type="button" aria-label="Bantuan shortcut">?</button>
+          <div class="topbar-badge" id="mode-label">Musik: Belajar + Istirahat</div>
+        </div>
       </header>
 
       <!-- ---------- VIEW: TIMER ---------- -->
@@ -76,6 +84,11 @@
                 <div class="time-display" id="time-display">30:00</div>
                 <div class="phase-caption" id="phase-caption">Siap memulai sesi belajar</div>
               </div>
+            </div>
+
+            <div class="task-row">
+              <label for="session-task">Fokus untuk:</label>
+              <input id="session-task" type="text" maxlength="80" placeholder="Contoh: baca Bab 3" />
             </div>
 
             <div class="controls">
@@ -107,6 +120,7 @@
                   <p class="muted" id="now-subtitle">Unggah lagu di panel Musik</p>
                 </div>
               </div>
+              <canvas id="viz-now" class="visualizer" width="240" height="36" aria-hidden="true"></canvas>
               <div class="mini-controls">
                 <button class="icon-btn" data-music-action="prev" type="button" aria-label="Lagu sebelumnya">⏮</button>
                 <button class="icon-btn icon-btn-primary" data-music-action="play" type="button" aria-label="Putar atau jeda musik">▶</button>
@@ -120,6 +134,12 @@
               <div class="card-head">
                 <h2>Pengaturan Cepat</h2>
                 <button class="link-btn" data-goto="settings" type="button">Detail →</button>
+              </div>
+              <div class="preset-row">
+                <button class="preset-btn" data-preset="25,5,4" type="button">25/5</button>
+                <button class="preset-btn" data-preset="50,10,2" type="button">50/10</button>
+                <button class="preset-btn" data-preset="15,3,4" type="button">15/3</button>
+                <button class="preset-btn" data-preset="30,10,2" type="button">30/10</button>
               </div>
               <div class="field-row">
                 <label for="quick-study">Belajar</label>
@@ -152,11 +172,26 @@
 
       <!-- ---------- VIEW: MUSIC ---------- -->
       <section id="view-music" class="view" aria-label="Halaman musik">
+        <!-- Album -->
+        <div class="card album-card">
+          <div class="card-head">
+            <div>
+              <h2>Album Lagu</h2>
+              <p class="muted small">Upload sekali, lalu pindah kategori kapan saja tanpa upload ulang.</p>
+            </div>
+          </div>
+          <div class="album-create">
+            <input id="album-name" type="text" maxlength="40" placeholder="Nama album baru, misal: Fokus Pagi" />
+            <button class="btn btn-small" id="btn-create-album" type="button">+ Buat Album</button>
+          </div>
+          <div class="album-list" id="album-list"></div>
+        </div>
+
         <div class="card music-head-card">
           <div class="card-head">
             <div>
               <h2>Pengaturan Musik</h2>
-              <p class="muted small">Musik berganti otomatis mengikuti fase timer.</p>
+              <p class="muted small">Musik berganti otomatis mengikuti fase timer dengan crossfade halus.</p>
             </div>
           </div>
           <div class="music-options">
@@ -179,6 +214,25 @@
           </div>
         </div>
 
+        <!-- Noise generator -->
+        <div class="card noise-card">
+          <div class="card-head">
+            <div>
+              <h2>Suara Latar (Noise)</h2>
+              <p class="muted small">Dibuat langsung oleh browser, tanpa file audio. Bisa jalan bareng lagu.</p>
+            </div>
+            <span class="chip" id="noise-status">Matikan</span>
+          </div>
+          <div class="noise-buttons">
+            <button class="btn btn-small" data-noise="rain" type="button">🌧 Hujan</button>
+            <button class="btn btn-small" data-noise="white" type="button">◽ White Noise</button>
+            <button class="btn btn-small" data-noise="cafe" type="button">☕ Kafe</button>
+            <button class="btn btn-danger-ghost btn-small" data-noise="off" type="button">■ Matikan</button>
+          </div>
+          <label class="range-label" for="noise-volume">Volume noise <span id="noise-volume-value">35%</span></label>
+          <input id="noise-volume" type="range" min="0" max="1" step="0.01" value="0.35" />
+        </div>
+
         <div class="music-columns">
           <div class="card library-card" data-category="study">
             <div class="card-head">
@@ -190,7 +244,7 @@
               <input id="input-study" class="visually-hidden" type="file" accept=".mp3,.wav,.ogg,.oga,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a" multiple />
             </div>
             <div class="track-list" id="list-study"></div>
-            <p class="muted tiny">MP3, WAV, OGG, atau M4A (tergantung dukungan browser).</p>
+            <p class="muted tiny">MP3, WAV, OGG, atau M4A. Bisa juga drag &amp; drop file langsung ke kartu ini.</p>
           </div>
 
           <div class="card library-card" data-category="break">
@@ -215,6 +269,7 @@
             </div>
             <span class="chip" id="player-source-chip">Belajar</span>
           </div>
+          <canvas id="viz-player" class="visualizer visualizer-lg" width="400" height="56" aria-hidden="true"></canvas>
           <div class="seek-row">
             <span id="seek-current">0:00</span>
             <input id="seek-bar" type="range" min="0" max="1000" step="1" value="0" aria-label="Posisi lagu" />
@@ -228,11 +283,47 @@
         </div>
       </section>
 
+      <!-- ---------- VIEW: STATISTICS ---------- -->
+      <section id="view-stats" class="view" aria-label="Halaman statistik">
+        <div class="stats-grid">
+          <div class="card chart-card">
+            <div class="card-head">
+              <div>
+                <h2>Aktivitas 7 Hari Terakhir</h2>
+                <p class="muted small">Menit belajar per hari</p>
+              </div>
+            </div>
+            <canvas id="focus-chart" width="640" height="240"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Ringkasan</h2></div>
+            <div class="stat-box">
+              <span class="stat-value" id="stat-streak">0</span>
+              <span class="stat-label">hari berturut-turut</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-value" id="stat-today">0</span>
+              <span class="stat-label">menit belajar hari ini</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-value" id="stat-total">0</span>
+              <span class="stat-label">total menit tercatat</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ---------- VIEW: SETTINGS ---------- -->
       <section id="view-settings" class="view" aria-label="Halaman pengaturan">
         <div class="settings-grid">
           <div class="card">
             <div class="card-head"><h2>Waktu &amp; Sesi</h2></div>
+            <div class="preset-row">
+              <button class="preset-btn" data-preset="25,5,4" type="button">25/5</button>
+              <button class="preset-btn" data-preset="50,10,2" type="button">50/10</button>
+              <button class="preset-btn" data-preset="15,3,4" type="button">15/3</button>
+              <button class="preset-btn" data-preset="30,10,2" type="button">30/10</button>
+            </div>
             <div class="setting-field">
               <label for="set-study">Durasi belajar</label>
               <div class="input-with-unit">
@@ -275,21 +366,32 @@
               <input id="alarm-settings" type="checkbox" data-setting="alarmEnabled" checked />
               <span>Alarm BEEP 10 detik sebelum pergantian fase</span>
             </label>
+            <label class="switch-row" for="notification-settings">
+              <input id="notification-settings" type="checkbox" data-setting="notificationsEnabled" />
+              <span>Notifikasi browser saat pergantian fase</span>
+            </label>
             <div class="setting-field">
               <label class="range-label" for="volume-settings">Volume musik <span class="volume-readout">70%</span></label>
               <input id="volume-settings" type="range" min="0" max="1" step="0.01" value="0.7" data-setting="volume" />
             </div>
-            <button class="btn btn-ghost btn-small" data-action="test-alarm" type="button">♪ Uji Suara Alarm</button>
+            <div class="button-stack">
+              <button class="btn btn-ghost btn-small" data-action="test-alarm" type="button">♪ Uji Suara Alarm</button>
+              <button class="btn btn-primary btn-small" id="btn-install" type="button">⬇ Pasang di HP</button>
+            </div>
           </div>
 
           <div class="card">
             <div class="card-head"><h2>Data &amp; Penyimpanan</h2></div>
-            <p class="muted small">Pengaturan dan riwayat tersimpan di localStorage. File musik tersimpan di IndexedDB.</p>
+            <p class="muted small">Pengaturan, riwayat, dan statistik tersimpan di localStorage. Album dan file musik tersimpan di IndexedDB. Tanpa server/database online.</p>
             <div class="button-stack">
+              <button class="btn btn-ghost btn-small" data-action="export-backup" type="button">⬇ Ekspor Backup (.json)</button>
+              <label class="btn btn-ghost btn-small" for="import-backup">⬆ Impor Backup (.json)</label>
+              <input id="import-backup" class="visually-hidden" type="file" accept=".json,application/json" />
               <button class="btn btn-ghost btn-small" data-action="clear-history" type="button">Hapus Riwayat</button>
               <button class="btn btn-danger-ghost btn-small" data-action="clear-tracks" type="button">Hapus Semua Lagu</button>
               <button class="btn btn-danger-ghost btn-small" data-action="reset-settings" type="button">Kembalikan Pengaturan Default</button>
             </div>
+            <p class="muted tiny">Backup berisi pengaturan, riwayat, log fokus, dan daftar album. File lagu tetap tersimpan di perangkat (tidak dimasukkan ke JSON agar ukurannya kecil). Untuk memindah lagu, ekspor/import file audio-nya lewat menu album di pustaka lagu.</p>
           </div>
         </div>
       </section>
@@ -308,6 +410,25 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Help overlay -->
+  <div class="help-overlay hidden" id="help-overlay" role="dialog" aria-modal="true" aria-label="Bantuan shortcut">
+    <div class="help-panel">
+      <div class="card-head">
+        <h2>Shortcut Keyboard</h2>
+        <button class="icon-btn" id="btn-close-help" type="button" aria-label="Tutup">✕</button>
+      </div>
+      <ul class="shortcut-list">
+        <li><kbd>Space</kbd><span>Play / jeda musik</span></li>
+        <li><kbd>N</kbd><span>Lagu berikutnya</span></li>
+        <li><kbd>P</kbd><span>Lagu sebelumnya</span></li>
+        <li><kbd>S</kbd><span>Mulai / jeda timer</span></li>
+        <li><kbd>R</kbd><span>Reset timer</span></li>
+        <li><kbd>?</kbd><span>Tampilkan bantuan ini</span></li>
+      </ul>
+      <p class="muted tiny">Shortcut tidak aktif saat sedang mengetik di kolom input.</p>
+    </div>
   </div>
 
   <div class="toast-region" id="toast-region" aria-live="polite"></div>

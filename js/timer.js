@@ -31,6 +31,7 @@
     this.endAt = null;          // timestamp absolut, bukan pengurang per tick
     this.tickHandle = null;
     this.lastBeepSecond = null;
+    this.lastCompletedPhase = null;
   }
 
   PomodoroTimer.prototype._startTick = function () {
@@ -64,6 +65,7 @@
       this.totalMs = this.settings.studyMinutes * 60000;
       this.remainingMs = this.totalMs;
       this.totalStudyMs = 0;
+      this.lastCompletedPhase = null;
     }
 
     this.status = "running";
@@ -98,6 +100,7 @@
     this.totalStudyMs = 0;
     this.endAt = null;
     this.lastBeepSecond = null;
+    this.lastCompletedPhase = null;
     if (typeof this.hooks.onReset === "function") this.hooks.onReset();
     this._emitUpdate();
   };
@@ -148,6 +151,7 @@
   PomodoroTimer.prototype._advancePhase = function (phaseEndAt) {
     if (this.phase === "study") {
       this.totalStudyMs += this.totalMs;
+      this.lastCompletedPhase = "study";
       this.phase = "break";
       this.totalMs = this.settings.breakMinutes * 60000;
       this.endAt = phaseEndAt + this.totalMs;
@@ -164,6 +168,7 @@
     }
 
     this.session += 1;
+    this.lastCompletedPhase = "break";
     this.phase = "study";
     this.totalMs = this.settings.studyMinutes * 60000;
     this.endAt = phaseEndAt + this.totalMs;
@@ -210,6 +215,7 @@
       remainingMs: this.remainingMs,
       totalMs: this.totalMs,
       totalStudyMs: this.totalStudyMs,
+      lastCompletedPhase: this.lastCompletedPhase,
       progress: progress,
       display: formatTime(this.remainingMs)
     };

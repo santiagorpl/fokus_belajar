@@ -1,24 +1,41 @@
 # FocusTune – Music & Study Timer
 
-Aplikasi web **Pomodoro timer** dengan musik otomatis, alarm hitung mundur, dan penyimpanan lokal. Dibuat dengan **HTML, CSS, dan JavaScript murni (Vanilla JS)** tanpa framework dan tanpa backend.
+Aplikasi **Pomodoro timer** dengan musik, album, noise generator, statistik fokus, dan bisa dipasang di HP sebagai **PWA**. Dibuat dengan **HTML, CSS, dan JavaScript murni (Vanilla JS)** — **tanpa framework, tanpa backend, tanpa database server**.
 
 ---
 
 ## ✨ Fitur
 
-- Timer belajar/istirahat dengan jumlah sesi yang bisa diatur.
-- Kontrol **MULAI**, **JEDA**, **LANJUTKAN**, dan **RESET** (aman dari double-start).
-- Timer berbasis timestamp, tetap akurat meskipun tab browser tidak aktif.
-- Upload beberapa lagu untuk kategori **Belajar** dan **Istirahat**.
-- Pemutar musik: play/pause, next, previous, pilih lagu, shuffle, seek, dan volume.
-- Musik berganti otomatis mengikuti fase timer.
-- 3 mode musik: **Belajar**, **Istirahat**, atau **Keduanya**.
-- Alarm **BEEP** dengan Web Audio API pada detik ke-10 sampai ke-1.
-- Notifikasi suara + pesan **SELAMAT! SEMUA SESI SELESAI**.
-- Riwayat sesi (maksimal 30 entri terakhir).
-- Pengaturan, riwayat → `localStorage`.
-- File lagu → `IndexedDB` (tetap tersedia setelah refresh/tutup browser).
-- Tampilan modern, dark green, responsif untuk desktop dan mobile.
+### Timer & sesi
+- Durasi belajar/istirahat dan jumlah sesi bisa diatur.
+- Preset cepat: `25/5`, `50/10`, `15/3`, `30/10`.
+- Kontrol **MULAI, JEDA, LANJUTKAN, RESET** (aman dari double-start).
+- Timer berbasis timestamp, tetap akurat walau tab tidak aktif.
+- Alarm **BEEP** Web Audio API pada detik ke-10 sampai ke-1.
+- Catatan tugas per sesi ikut tersimpan di riwayat.
+
+### Musik & album
+- Upload banyak lagu (MP3/WAV/OGG/M4A) sekali saja, lewat tombol **+ Unggah** atau **drag & drop** ke kartu pustaka.
+- **Album**: buat album, pindah lagu antar album, hapus album.
+- Tombol **B / I** untuk memindahkan lagu ke kategori **Belajar** atau **Istirahat** tanpa upload ulang.
+- Tombol **✎** mengganti judul tampilan lagu, **⬇** mengunduh file lagu aslinya.
+- Pemutar: play/pause, next, previous, pilih lagu, shuffle, seek, volume.
+- **Crossfade halus** saat pindah fase.
+- **Visualizer equalizer** memakai `AnalyserNode`.
+- 3 mode musik: Belajar, Istirahat, Keduanya.
+
+### Suara & statistik
+- **Noise generator**: Hujan, White Noise, Kafe — dibuat langsung oleh Web Audio API, tanpa file.
+- Grafik fokus 7 hari terakhir (`canvas` murni) + **streak** harian.
+- Riwayat sesi (maksimal 30 entri).
+- Notifikasi browser saat pergantian fase (opsional).
+- Keyboard shortcut: `Space`, `N`, `P`, `S`, `R`, `?`.
+- Wake Lock agar layar HP tidak mati saat timer berjalan.
+
+### Mobile / PWA
+- Responsif di laptop dan HP.
+- Bisa di-install ke home screen Android/iOS lewat browser.
+- Service worker membuat aplikasi bisa dipakai **offline**.
 
 ---
 
@@ -26,94 +43,106 @@ Aplikasi web **Pomodoro timer** dengan musik otomatis, alarm hitung mundur, dan 
 
 ```text
 focustune/
+├── .gitignore
+├── README.md
 ├── index.html
+├── manifest.webmanifest
+├── sw.js
 ├── css/
 │   └── style.css
 ├── js/
-│   ├── app.js       # menghubungkan UI dengan seluruh modul
-│   ├── timer.js     # logika Pomodoro & sesi
-│   ├── music.js     # pustaka lagu, pemutar, perpindahan fase
-│   ├── alarm.js     # suara beep & notifikasi (Web Audio API)
-│   └── storage.js   # localStorage + IndexedDB
+│   ├── app.js
+│   ├── timer.js
+│   ├── music.js
+│   ├── alarm.js
+│   └── storage.js
 └── assets/
     └── icons/
-        └── favicon.svg
+        ├── favicon.svg
+        ├── icon-192.png
+        └── icon-512.png
 ```
 
 ---
 
 ## 🚀 Cara Menjalankan
 
-### Opsi 1 — VS Code + Live Server (direkomendasikan)
+### VS Code + Live Server
+1. Buka folder `focustune` di VS Code.
+2. Install ekstensi **Live Server** (Ritwick Dey).
+3. Klik kanan `index.html` → **Open with Live Server**.
+4. Buka `http://127.0.0.1:5500`.
 
-1. Buka VS Code.
-2. `File → Open Folder…` lalu pilih folder `focustune`.
-3. Install ekstensi **Live Server** (Ritwick Dey) jika belum ada.
-4. Klik kanan `index.html` → **Open with Live Server**.
-5. Browser akan membuka `http://127.0.0.1:5500/index.html`.
-
-### Opsi 2 — Python (tanpa ekstensi)
-
+### Python
 ```bash
 cd focustune
 python -m http.server 5500
 ```
 
-Lalu buka `http://localhost:5500`.
+> Service worker dan PWA butuh `localhost` atau HTTPS. Jangan buka dengan `file://`.
 
-> Disarankan memakai web server (bukan membuka `index.html` dengan `file://`) agar IndexedDB dan autoplay berperilaku normal.
+---
+
+## 📱 Cara Pasang di HP (PWA)
+
+Cara paling mudah: **GitHub Pages** (gratis & HTTPS).
+
+1. Push project ini ke GitHub.
+2. Buka repo → **Settings → Pages**.
+3. Pilih **Source: Deploy from a branch** → branch `main` → folder **/(root)** → Save.
+4. Tunggu beberapa menit, lalu buka:
+   ```text
+   https://santiagorpl.github.io/fokus_belajar/
+   ```
+5. Di HP:
+   - **Chrome Android**: menu ⋮ → **Install app** / **Add to Home screen**
+   - **Safari iOS**: tombol Share → **Add to Home Screen**
+
+Setelah dipasang, ikon FocusTune muncul di home screen dan bisa dibuka seperti aplikasi biasa, termasuk offline.
+
+> PWA **bukan file `.apk`**, tapi tampil dan berfungsi seperti aplikasi di HP.  
+> Kalau nanti benar-benar ingin file `.apk`, aplikasi ini bisa dibungkus dengan **Capacitor** + Android Studio. Itu opsional dan tidak diperlukan untuk pakai di HP.
+
+---
+
+## 💾 Penyimpanan Data (tetap lokal)
+
+| Data | Tempat |
+|---|---|
+| Pengaturan, notifikasi, riwayat, log fokus/streak | `localStorage` |
+| Album dan file MP3/WAV/OGG/M4A | `IndexedDB` |
+
+Tidak ada data yang dikirim ke server. Jika ingin sinkron antar perangkat/login, baru perlu backend + database (Supabase/Firebase).
+
+### Backup tanpa server
+- **Pengaturan → Ekspor Backup (.json)**: menyimpan pengaturan, riwayat, log fokus/streak, dan daftar album.
+- **Impor Backup (.json)**: memulihkan data tersebut di perangkat/browser lain.
+- File audio sengaja tidak dimasukkan ke JSON agar ukurannya kecil. Simpan/pindahkan file lagu lewat tombol **⬇** pada tiap lagu, lalu unggah lagi di perangkat tujuan.
 
 ---
 
 ## 🎵 Cara Pakai Singkat
 
-1. Buka menu **Musik**, unggah lagu belajar dan/atau lagu istirahat.
-2. Pilih mode musik di **Pengaturan** atau halaman **Musik**.
-3. Kembali ke **Timer**, atur durasi & jumlah sesi.
-4. Klik **MULAI** — klik ini juga mengizinkan browser memutar audio.
-5. Saat tersisa 10 detik, alarm akan berbunyi setiap detik sampai detik ke-1.
+1. Buka **Musik → Album**, buat album misalnya “Fokus Pagi”.
+2. Pilih album itu, lalu unggah 5 lagu sekalian di **Musik Belajar** / **Musik Istirahat**.
+3. Klik tombol **B** atau **I** pada lagu untuk mengubah kategori tanpa upload ulang.
+4. Nyalakan noise di **Musik → Suara Latar** kalau suka.
+5. Klik **MULAI** di Timer (sekali klik juga mengizinkan audio/browser).
+6. Alarm bunyi saat tersisa 10 detik; musik otomatis pindah fase dengan crossfade.
 
-### Tips uji cepat
-Atur **Belajar = 1 menit**, **Istirahat = 1 menit**, **Sesi = 2**. Dengan begitu satu siklus penuh selesai dalam 4 menit.
-
-> Jika autoplay diblokir browser, klik sekali tombol **▶** pada pemutar musik. Setelah itu lagu akan otomatis mengikuti fase timer.
+Tips uji cepat: preset `15/3` atau atur **Belajar = 1 menit, Istirahat = 1 menit, Sesi = 2**.
 
 ---
 
-## 💾 Penyimpanan Data
-
-| Data | Tempat | Keterangan |
-|---|---|---|
-| Pengaturan waktu, sesi, mode, volume, alarm | `localStorage` | Tersimpan per browser |
-| Riwayat sesi | `localStorage` | Maksimal 30 entri |
-| File MP3/WAV/OGG/M4A | `IndexedDB` | Disimpan sebagai Blob, tidak perlu upload ulang |
-
-Data **tidak dikirim ke server** dan hanya tersedia di perangkat/browser yang dipakai. Untuk sinkronisasi lintas perangkat atau login, aplikasi perlu dikembangkan dengan backend + database (Firebase/Supabase/MySQL).
-
----
-
-## 📤 Upload ke GitHub
-
-Jika folder ini belum menjadi repository:
+## 📤 Update ke GitHub
 
 ```bash
 cd focustune
-git init
 git add .
-git commit -m "Initial commit - FocusTune Music & Study Timer"
-git branch -M main
-git remote add origin https://github.com/USERNAME/NAMA_REPO.git
-git push -u origin main
+git commit -m "Update FocusTune - album, noise, statistik, PWA"
+git push
 ```
 
-Ganti `USERNAME` dan `NAMA_REPO` dengan milik kakak.
-
 ---
 
-## ✅ Kompatibilitas Browser
-
-Ditujukan untuk browser modern: Chrome, Edge, Firefox, dan Safari versi terbaru. Fitur yang dipakai: `IndexedDB`, `URL.createObjectURL`, `Web Audio API`, `async/await`, dan `Element.closest`.
-
----
-
-Dibuat untuk kegiatan belajar. Silakan dimodifikasi sesuai kebutuhan.
+Dibuat untuk belajar. Silakan dimodifikasi sesuai kebutuhan.
