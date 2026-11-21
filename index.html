@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#07120e" />
   <meta name="description" content="FocusTune – Pomodoro timer dengan musik, album, noise generator, dan statistik fokus. Bisa dipasang di HP." />
   <title>FocusTune – Music &amp; Study Timer</title>
@@ -218,7 +218,7 @@
         <div class="card noise-card">
           <div class="card-head">
             <div>
-              <h2>Suara Latar (Noise)</h2>
+              <h2>Suara Latar (10 Pilihan)</h2>
               <p class="muted small">Dibuat langsung oleh browser, tanpa file audio. Bisa jalan bareng lagu.</p>
             </div>
             <span class="chip" id="noise-status">Matikan</span>
@@ -227,10 +227,26 @@
             <button class="btn btn-small" data-noise="rain" type="button">🌧 Hujan</button>
             <button class="btn btn-small" data-noise="white" type="button">◽ White Noise</button>
             <button class="btn btn-small" data-noise="cafe" type="button">☕ Kafe</button>
+            <button class="btn btn-small" data-noise="waves" type="button">🌊 Ombak Laut</button>
+            <button class="btn btn-small" data-noise="wind" type="button">🍃 Angin</button>
+            <button class="btn btn-small" data-noise="fire" type="button">🔥 Perapian</button>
+            <button class="btn btn-small" data-noise="forest" type="button">🌲 Hutan</button>
+            <button class="btn btn-small" data-noise="night" type="button">🌙 Malam</button>
+            <button class="btn btn-small" data-noise="stream" type="button">💧 Air Sungai</button>
+            <button class="btn btn-small" data-noise="brown" type="button">🟤 Brown Noise</button>
             <button class="btn btn-danger-ghost btn-small" data-noise="off" type="button">■ Matikan</button>
           </div>
           <label class="range-label" for="noise-volume">Volume noise <span id="noise-volume-value">35%</span></label>
           <input id="noise-volume" type="range" min="0" max="1" step="0.01" value="0.35" />
+
+          <div class="noise-save">
+            <p class="muted small">Suka suaranya? Simpan jadi lagu supaya ikut diputar otomatis:</p>
+            <p class="muted tiny">Suara terpilih: <strong id="noise-selected">Hujan</strong> · disimpan 30 detik berulang.</p>
+            <div class="noise-save-buttons">
+              <button class="btn btn-small" id="noise-add-study" type="button">＋ Tambah ke Musik Belajar</button>
+              <button class="btn btn-small" id="noise-add-break" type="button">＋ Tambah ke Musik Istirahat</button>
+            </div>
+          </div>
         </div>
 
         <div class="music-columns">
@@ -240,11 +256,11 @@
                 <h2>Musik Belajar</h2>
                 <p class="muted small"><span id="count-study">0</span> lagu tersimpan</p>
               </div>
-              <label class="btn btn-small" for="input-study">+ Unggah</label>
-              <input id="input-study" class="visually-hidden" type="file" accept=".mp3,.wav,.ogg,.oga,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a" multiple />
+              <label class="btn btn-small" for="input-study">+ Unggah MP3</label>
+              <input id="input-study" class="visually-hidden" type="file" accept=".mp3,audio/mpeg,audio/mp3" multiple />
             </div>
             <div class="track-list" id="list-study"></div>
-            <p class="muted tiny">MP3, WAV, OGG, atau M4A. Bisa juga drag &amp; drop file langsung ke kartu ini.</p>
+            <p class="upload-notice">⚠ <strong>Wajib format MP3 (.mp3)</strong> — file lain akan ditolak. Bisa drag &amp; drop langsung ke kartu ini.</p>
           </div>
 
           <div class="card library-card" data-category="break">
@@ -253,11 +269,11 @@
                 <h2>Musik Istirahat</h2>
                 <p class="muted small"><span id="count-break">0</span> lagu tersimpan</p>
               </div>
-              <label class="btn btn-small" for="input-break">+ Unggah</label>
-              <input id="input-break" class="visually-hidden" type="file" accept=".mp3,.wav,.ogg,.oga,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a" multiple />
+              <label class="btn btn-small" for="input-break">+ Unggah MP3</label>
+              <input id="input-break" class="visually-hidden" type="file" accept=".mp3,audio/mpeg,audio/mp3" multiple />
             </div>
             <div class="track-list" id="list-break"></div>
-            <p class="muted tiny">Lagu ini otomatis diputar saat fase istirahat dimulai.</p>
+            <p class="upload-notice">⚠ <strong>Wajib format MP3 (.mp3)</strong> — file lain akan ditolak. Otomatis diputar saat istirahat.</p>
           </div>
         </div>
 

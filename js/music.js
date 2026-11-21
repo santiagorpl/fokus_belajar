@@ -8,8 +8,8 @@
   var storage = window.FocusTune.storage;
 
   var CATEGORY_LABEL = { study: "Belajar", break: "Istirahat" };
-  var EXTENSION_PATTERN = /\.(mp3|wav|wave|ogg|oga|m4a)$/i;
-  var MIME_PATTERN = /^audio\/(mpeg|mp3|wav|wave|x-wav|ogg|oga|mp4|x-m4a|aac)$/i;
+  var EXTENSION_PATTERN = /\.mp3$/i;
+  var MIME_PATTERN = /^audio\/(mpeg|mp3)$/i;
   var MIME_GUESS = {
     mp3: "audio/mpeg", wav: "audio/wav", wave: "audio/wav",
     ogg: "audio/ogg", oga: "audio/ogg", m4a: "audio/mp4"
@@ -256,6 +256,24 @@
 
     await this.refresh();
     return { added: valid.length, skipped: skipped };
+  };
+
+  MusicManager.prototype.addBlobTrack = async function (blob, name, fileName, category, albumId) {
+    var targetAlbum = albumId && this.albums.some(function (a) { return a.id === albumId; })
+      ? albumId : DEFAULT_ALBUM_ID;
+    await storage.putTrack({
+      id: makeId(),
+      category: category,
+      albumId: targetAlbum,
+      name: name,
+      fileName: fileName,
+      type: blob.type || "audio/wav",
+      size: blob.size,
+      createdAt: Date.now(),
+      blob: blob
+    });
+    await this.refresh();
+    return true;
   };
 
   MusicManager.prototype.updateTrack = async function (id, patch) {

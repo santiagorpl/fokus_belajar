@@ -15,7 +15,7 @@ Aplikasi **Pomodoro timer** dengan musik, album, noise generator, statistik foku
 - Catatan tugas per sesi ikut tersimpan di riwayat.
 
 ### Musik & album
-- Upload banyak lagu (MP3/WAV/OGG/M4A) sekali saja, lewat tombol **+ Unggah** atau **drag & drop** ke kartu pustaka.
+- Upload banyak lagu **MP3 (.mp3)** sekali saja, lewat tombol **+ Unggah MP3** atau **drag & drop** ke kartu pustaka. File bukan MP3 otomatis ditolak dan muncul pemberitahuan.
 - **Album**: buat album, pindah lagu antar album, hapus album.
 - Tombol **B / I** untuk memindahkan lagu ke kategori **Belajar** atau **Istirahat** tanpa upload ulang.
 - Tombol **✎** mengganti judul tampilan lagu, **⬇** mengunduh file lagu aslinya.
@@ -25,7 +25,8 @@ Aplikasi **Pomodoro timer** dengan musik, album, noise generator, statistik foku
 - 3 mode musik: Belajar, Istirahat, Keduanya.
 
 ### Suara & statistik
-- **Noise generator**: Hujan, White Noise, Kafe — dibuat langsung oleh Web Audio API, tanpa file.
+- **10 suara latar**: Hujan, White Noise, Kafe, Ombak Laut, Angin, Perapian, Hutan, Malam, Air Sungai, Brown Noise — semuanya dibuat langsung oleh Web Audio API, tanpa file.
+- Suara latar bisa **disimpan jadi lagu** ke Musik Belajar / Musik Istirahat lewat tombol **＋ Tambah ke Musik…** (dirender jadi WAV 30 detik, ikut terputar otomatis mengikuti timer).
 - Grafik fokus 7 hari terakhir (`canvas` murni) + **streak** harian.
 - Riwayat sesi (maksimal 30 entri).
 - Notifikasi browser saat pergantian fase (opsional).
@@ -128,7 +129,7 @@ D:\santiago\waktu_belajar\focustune-apk\README.md
 | Data | Tempat |
 |---|---|
 | Pengaturan, notifikasi, riwayat, log fokus/streak | `localStorage` |
-| Album dan file MP3/WAV/OGG/M4A | `IndexedDB` |
+| Album, file MP3, dan suara bawaan yang disimpan (WAV) | `IndexedDB` |
 
 Tidak ada data yang dikirim ke server. Jika ingin sinkron antar perangkat/login, baru perlu backend + database (Supabase/Firebase).
 
@@ -144,7 +145,7 @@ Tidak ada data yang dikirim ke server. Jika ingin sinkron antar perangkat/login,
 1. Buka **Musik → Album**, buat album misalnya “Fokus Pagi”.
 2. Pilih album itu, lalu unggah 5 lagu sekalian di **Musik Belajar** / **Musik Istirahat**.
 3. Klik tombol **B** atau **I** pada lagu untuk mengubah kategori tanpa upload ulang.
-4. Nyalakan noise di **Musik → Suara Latar** kalau suka.
+4. Pilih salah satu dari 10 suara di **Musik → Suara Latar**. Kalau suka, tekan **＋ Tambah ke Musik Belajar** supaya suaranya ikut terputar automatis.
 5. Klik **MULAI** di Timer (sekali klik juga mengizinkan audio/browser).
 6. Alarm bunyi saat tersisa 10 detik; musik otomatis pindah fase dengan crossfade.
 

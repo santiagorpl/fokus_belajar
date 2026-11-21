@@ -11,6 +11,8 @@
   var DEFAULT_ALBUM_ID = FT.DEFAULT_ALBUM_ID;
 
   var CATEGORY_LABEL = { study: "Belajar", break: "Istirahat" };
+  var NOISE_TYPES = FT.NOISE_TYPES || {};
+  var selectedNoiseType = "rain";
   var PAGE_TITLE = {
     timer: "Timer Belajar",
     music: "Musik & Album",
@@ -618,7 +620,7 @@
       if (input) input.value = "";
       if (result.added) toast(result.added + " lagu " + CATEGORY_LABEL[category].toLowerCase() + " ditambahkan.");
       if (result.skipped.length) {
-        toast(result.skipped.length + " file ditolak (format tidak didukung): " + result.skipped.slice(0, 3).join(", "), "warn");
+        toast("Wajib MP3! " + result.skipped.length + " file ditolak: " + result.skipped.slice(0, 3).join(", "), "warn");
       }
       if (result.added && timer.getState().status === "running") {
         music.applyPhase(timer.getState().phase, { autoplay: true, force: true });
@@ -725,6 +727,28 @@
     toast("Lagu '" + track.name + "' diunduh.");
   }
 
+  async function handleAddNoise(category) {
+    var type = selectedNoiseType;
+    var config = NOISE_TYPES[type] || { label: "Suara Latar" };
+    toast("Membuat " + config.label + " 30 detik...");
+    try {
+      var blob = await noise.renderWav(type, 30);
+      if (!blob) {
+        toast("Browser belum mengizinkan audio. Tekan tombol suara dulu, lalu coba lagi.", "warn");
+        return;
+      }
+      var albumId = music.albumFilter === "all" ? DEFAULT_ALBUM_ID : music.albumFilter;
+      var fileName = config.label.toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".wav";
+      await music.addBlobTrack(blob, config.label + " (bawaan)", fileName, category, albumId);
+      toast(config.label + " ditambahkan ke musik " + CATEGORY_LABEL[category].toLowerCase() + ".");
+      if (timer.getState().status === "running") {
+        music.applyPhase(timer.getState().phase, { autoplay: true, force: true });
+      }
+    } catch (error) {
+      toast("Gagal menyimpan suara: " + error.message, "error");
+    }
+  }
+
   async function handleDeleteTrack(id) {
     try { await music.removeTrack(id); toast("Lagu dihapus dari pustaka."); }
     catch (error) { toast("Gagal menghapus lagu: " + error.message, "error"); }
@@ -797,14 +821,20 @@
           $("#noise-status").textContent = "Matikan";
           toast("Suara latar dimatikan.");
         } else {
+          selectedNoiseType = type;
+          $("#noise-selected").textContent = (NOISE_TYPES[type] || {}).label || type;
           noise.start(type).then(function (ok) {
             if (!ok) { toast("Browser tidak mengizinkan audio. Klik tombol ini sekali lagi.", "warn"); return; }
-            $("#noise-status").textContent = { rain: "Hujan", white: "White Noise", cafe: "Kafe" }[type];
-            toast("Suara latar " + $("#noise-status").textContent.toLowerCase() + " aktif.");
+            var label = (NOISE_TYPES[type] || {}).label || type;
+            $("#noise-status").textContent = label;
+            toast("Suara latar " + label.toLowerCase() + " aktif.");
           });
         }
         return;
       }
+
+      if (element.closest("#noise-add-study")) { handleAddNoise("study"); return; }
+      if (element.closest("#noise-add-break")) { handleAddNoise("break"); return; }
 
       var modeButton = element.closest("[data-mode]");
       if (modeButton) { updateSettings({ musicMode: modeButton.dataset.mode }); return; }

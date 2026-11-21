@@ -27,7 +27,30 @@
 
 * { box-sizing: border-box; }
 
+/* Mencegah WebView HP zoom/geser horizontal saat Konten berubah ( START timer ) */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+}
 html { scroll-behavior: smooth; }
+
+.app-shell, .main, .view, .card, .timer-grid, .side-stack, .music-columns,
+.timer-card, .now-track, .now-meta, .track-item, .track-meta, .hint-card,
+.hint-card p, .toast, .toast span, .history-item, .album-list, .album-create {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.hint-card p, .toast span, .upload-notice, .muted, .tiny {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+#hint-text { max-width: 100%; overflow-wrap: anywhere; }
 
 body {
   margin: 0;
@@ -408,6 +431,7 @@ input[type="number"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px 
   border-radius: 12px;
   box-shadow: var(--shadow);
   font-size: .82rem;
+  overflow: hidden;
   animation: toastIn .3s ease both;
 }
 .toast.warn { border-left-color: var(--warning); }
@@ -495,6 +519,20 @@ input[type="number"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px 
 
 .noise-card { margin-bottom: 20px; }
 .noise-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.noise-save {
+  margin-top: 18px; padding-top: 16px;
+  border-top: 1px dashed var(--line-strong);
+}
+.noise-save-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.noise-save-buttons .btn { flex: 1 1 200px; }
+
+.upload-notice {
+  margin-top: 10px;
+  color: var(--warning);
+  font-size: .72rem;
+  line-height: 1.5;
+}
+.upload-notice strong { color: var(--warning); }
 
 .library-card.drag-over {
   border-color: var(--accent);
